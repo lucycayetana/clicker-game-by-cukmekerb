@@ -24,7 +24,8 @@
                     gps:20,
                     name:"Generic Worlds"
                 }
-            }
+            },
+            achievements:[{req:"clicker.generics>0", gotten:false,text:"You have one generic"},{req:"clicker.generics>9", gotten:false,text:"You have ten generics"}]
         };
         var delay = 0;
         function thing_clicked(thing){
@@ -50,11 +51,25 @@
                     }
                 }
                 clicker = clicker1;
+            
+                for(i in clicker.achievements){
+                    if(clicker1.achievements[i] == null || clicker.achievements[i].text != clicker1.achievements[i].text){
+                        clicker1.achievements[i] = clicker.achievements[i]
+                    }
+                }
+                clicker = clicker1;
             }
             update_upgrades();
             setInterval(() => {
                 for(i in clicker.upgrades){
                     clicker.generics+=clicker.upgrades[i].amount*clicker.upgrades[i].gps/20;
+                }
+                for(i in clicker.achievements){
+                    var b = new Function('return '+clicker.achievements[i].req);
+                    if(b() && !clicker.achievements[i].gotten){
+                        clicker.achievements[i].gotten = true;
+                        document.querySelector("#achievements").innerHTML+=`<br>ACHIEVEMENT UNLOCKED<br>${clicker.achievements[i].text}`;
+                    }
                 }
                 document.querySelector("#generics").innerHTML = "you have "+String(clicker.generics).split(".")[0]+" generics";
                 delay++;
@@ -72,4 +87,6 @@
     <div id="upgrades">
 
     </div>
+    <br>
+    <div id="achievements" style="width: 400px; height: 300px; overflow:scroll"></div>
 </body>
